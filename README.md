@@ -5,6 +5,9 @@ Microsserviço de Privacidade do Sistema de Gestão de Restaurantes (RMS) desenv
 ![NodeJS](https://img.shields.io/badge/node.js-6DA55F?style=for-the-badge&logo=node.js&logoColor=white)
 ![TypeScript](https://img.shields.io/badge/typescript-%23007ACC.svg?style=for-the-badge&logo=typescript&logoColor=white)
 
+![infra-privacidade](https://github.com/Grupo-G03-4SOAT-FIAP/rms-api-privacidade/assets/63567959/c003d1fe-fe0c-4365-838a-7e1e23f5a6d4)
+
+
 This project contains source code and supporting files for a serverless application that you can deploy with the SAM CLI. It includes the following files and folders.
 
 - hello-world - Code for the application's Lambda function written in TypeScript.
