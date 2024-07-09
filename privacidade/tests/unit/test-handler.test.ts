@@ -1,5 +1,5 @@
 import { APIGatewayProxyEvent } from 'aws-lambda';
-import { MongoClient, Db, Collection } from 'mongodb';
+import { MongoClient } from 'mongodb';
 import { lambdaHandler } from '../../app';
 
 jest.mock('mongodb', () => {
