@@ -1,65 +1,130 @@
-import { APIGatewayProxyEvent, APIGatewayProxyResult } from 'aws-lambda';
+import { APIGatewayProxyEvent } from 'aws-lambda';
+import { MongoClient, Db, Collection } from 'mongodb';
 import { lambdaHandler } from '../../app';
-import { expect, describe, it } from '@jest/globals';
 
-describe('Unit test for app handler', function () {
-    it('verifies successful response', async () => {
+jest.mock('mongodb', () => {
+    const actualMongoDB = jest.requireActual('mongodb');
+    return {
+        ...actualMongoDB,
+        MongoClient: jest.fn().mockImplementation(() => ({
+            connect: jest.fn(),
+            db: jest.fn().mockReturnValue({
+                collection: jest.fn().mockReturnValue({
+                    insertOne: jest.fn().mockResolvedValue({ insertedId: 'mocked_id' }),
+                }),
+            }),
+            close: jest.fn(),
+        })),
+    };
+});
+
+const mockedMongoClient = new MongoClient('mocked_uri') as unknown as jest.Mocked<MongoClient>;
+
+describe('lambdaHandler', () => {
+    it('should return 400 if required fields are missing', async () => {
         const event: APIGatewayProxyEvent = {
-            httpMethod: 'get',
-            body: '',
+            body: JSON.stringify({}),
             headers: {},
-            isBase64Encoded: false,
             multiValueHeaders: {},
-            multiValueQueryStringParameters: {},
-            path: '/hello',
-            pathParameters: {},
-            queryStringParameters: {},
+            httpMethod: 'POST',
+            isBase64Encoded: false,
+            path: '/',
+            pathParameters: null,
+            queryStringParameters: null,
+            multiValueQueryStringParameters: null,
+            stageVariables: null,
             requestContext: {
-                accountId: '123456789012',
-                apiId: '1234',
-                authorizer: {},
-                httpMethod: 'get',
+                accountId: '',
+                apiId: '',
+                authorizer: null,
+                httpMethod: 'POST',
                 identity: {
-                    accessKey: '',
-                    accountId: '',
-                    apiKey: '',
-                    apiKeyId: '',
-                    caller: '',
-                    clientCert: {
-                        clientCertPem: '',
-                        issuerDN: '',
-                        serialNumber: '',
-                        subjectDN: '',
-                        validity: { notAfter: '', notBefore: '' },
-                    },
-                    cognitoAuthenticationProvider: '',
-                    cognitoAuthenticationType: '',
-                    cognitoIdentityId: '',
-                    cognitoIdentityPoolId: '',
-                    principalOrgId: '',
+                    accessKey: null,
+                    accountId: null,
+                    apiKey: null,
+                    apiKeyId: null,
+                    caller: null,
+                    clientCert: null,
+                    cognitoAuthenticationProvider: null,
+                    cognitoAuthenticationType: null,
+                    cognitoIdentityId: null,
+                    cognitoIdentityPoolId: null,
+                    principalOrgId: null,
                     sourceIp: '',
-                    user: '',
-                    userAgent: '',
-                    userArn: '',
+                    user: null,
+                    userAgent: null,
+                    userArn: null,
                 },
-                path: '/hello',
-                protocol: 'HTTP/1.1',
-                requestId: 'c6af9ac6-7b61-11e6-9a41-93e8deadbeef',
-                requestTimeEpoch: 1428582896000,
-                resourceId: '123456',
-                resourcePath: '/hello',
-                stage: 'dev',
+                path: '/',
+                protocol: '',
+                requestId: '',
+                requestTimeEpoch: 0,
+                resourceId: '',
+                resourcePath: '',
+                stage: '',
             },
             resource: '',
-            stageVariables: {},
         };
-        const result: APIGatewayProxyResult = await lambdaHandler(event);
 
-        expect(result.statusCode).toEqual(200);
-        expect(result.body).toEqual(
-            JSON.stringify({
-                message: 'hello world',
+        const result = await lambdaHandler(event, mockedMongoClient);
+        expect(result.statusCode).toBe(400);
+        expect(JSON.parse(result.body).message).toBe('Os campos nome, endereco, and numeroTelefone são obrigatorios');
+    });
+
+    it('should return 200 if data is inserted successfully', async () => {
+        const event: APIGatewayProxyEvent = {
+            body: JSON.stringify({
+                nome: 'John Doe',
+                endereco: '123 Main St',
+                numeroTelefone: '555-1234',
             }),
-        );
+            headers: {},
+            multiValueHeaders: {},
+            httpMethod: 'POST',
+            isBase64Encoded: false,
+            path: '/',
+            pathParameters: null,
+            queryStringParameters: null,
+            multiValueQueryStringParameters: null,
+            stageVariables: null,
+            requestContext: {
+                accountId: '',
+                apiId: '',
+                authorizer: null,
+                httpMethod: 'POST',
+                identity: {
+                    accessKey: null,
+                    accountId: null,
+                    apiKey: null,
+                    apiKeyId: null,
+                    caller: null,
+                    clientCert: null,
+                    cognitoAuthenticationProvider: null,
+                    cognitoAuthenticationType: null,
+                    cognitoIdentityId: null,
+                    cognitoIdentityPoolId: null,
+                    principalOrgId: null,
+                    sourceIp: '',
+                    user: null,
+                    userAgent: null,
+                    userArn: null,
+                },
+                path: '/',
+                protocol: '',
+                requestId: '',
+                requestTimeEpoch: 0,
+                resourceId: '',
+                resourcePath: '',
+                stage: '',
+            },
+            resource: '',
+        };
+
+        const result = await lambdaHandler(event, mockedMongoClient);
+        expect(result.statusCode).toBe(200);
+        const responseBody = JSON.parse(result.body);
+        expect(responseBody.message).toBe('Solicitacao de exclusão ou inativacão de dado realizada com sucesso');
+        expect(responseBody.protocolo).toBeDefined();
+        expect(responseBody.protocolo).toBe('mocked_id');
     });
 });
