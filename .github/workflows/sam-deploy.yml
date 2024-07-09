@@ -19,7 +19,7 @@ jobs:
       - run: sam build --use-container
       - name: SAM Deploy
         run: |
-          sam deploy --no-confirm-changeset --no-fail-on-empty-changeset
+          sam deploy --no-confirm-changeset --no-fail-on-empty-changeset --parameter-overrides MongoDbUri=${{ secrets.MONGODB_URI }}
 
 # Workflow baseado nos exemplos fornecidos pela documentação da AWS em 
 # https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/deploying-using-github.html
