@@ -39,7 +39,7 @@ Resources:
 Parameters:
   MongoDbUri:
     Type: String
-    Default: '<inserir url de conexao>'
+    Default: ''
 Outputs:
   HelloWorldApi:
     Description: "API Gateway endpoint URL for Prod stage for Hello World function"
