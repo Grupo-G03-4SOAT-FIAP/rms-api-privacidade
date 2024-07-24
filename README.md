@@ -15,7 +15,7 @@ Microsserviço de Privacidade do Sistema de Gestão de Restaurantes (RMS) desenv
 ## Relatório de Impacto à Proteção de Dados Pessoais (RIPD)🔒
 
 O Relatório de Impacto à Proteção de Dados Pessoais (RIPD) está disponível na pasta `/docs/RIPD`\
-[Clique aqui para acessar](https://github.com/Grupo-G03-4SOAT-FIAP/rms-api-privacidade/tree/main/docs/RPID)↗️
+[Clique aqui para acessar](https://github.com/Grupo-G03-4SOAT-FIAP/rms-api-privacidade/tree/main/docs/RIPD)↗️
 
 ## Pré-requisitos
 
